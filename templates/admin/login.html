@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}تسجيل دخول المشرف - نظام إدارة وتأجير الآلات الزراعية{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h3 class="mb-0 text-center">تسجيل دخول المشرف</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('admin_login') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">اسم المستخدم</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">كلمة المرور</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <small class="text-muted">اسم المستخدم الافتراضي: admin</small><br>
+                <small class="text-muted">كلمة المرور الافتراضية: admin123</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

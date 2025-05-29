@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ machine.name }} - نظام إدارة وتأجير الآلات الزراعية{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}">الرئيسية</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('machines') }}">الآلات الزراعية</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ machine.name }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card">
+            {% if machine.image %}
+            <img src="{{ url_for('static', filename='uploads/' + machine.image) }}" class="card-img-top machine-details-img" alt="{{ machine.name }}">
+            {% else %}
+            <img src="{{ url_for('static', filename='uploads/default-machine.jpg') }}" class="card-img-top machine-details-img" alt="صورة افتراضية">
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h3 class="mb-0">{{ machine.name }}</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th scope="row">النوع</th>
+                            <td>{{ machine.type }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">الولاية</th>
+                            <td>{{ machine.state }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">المحلية</th>
+                            <td>{{ machine.locality }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">رقم هاتف المالك</th>
+                            <td><a href="tel:{{ machine.owner_phone }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-phone me-1"></i> {{ machine.owner_phone }}</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h5 class="mt-3">الوصف:</h5>
+                <p>{{ machine.description }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h4 class="mb-0">طلب حجز الآلة</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('machine_details', machine_id=machine.id) }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">الاسم</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label">رقم الهاتف</label>
+                            <input type="text" class="form-control" id="phone" name="phone" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="acres" class="form-label">عدد الفدادين المطلوبة</label>
+                            <input type="number" class="form-control" id="acres" name="acres" min="1" required>
+                        </div>
+                        {% if machine.type_id in [1, 7, 8, 9, 10] %}
+                        <div class="col-md-6">
+                            <label for="crop_type" class="form-label">نوع المحصول</label>
+                            <input type="text" class="form-control" id="crop_type" name="crop_type" required>
+                        </div>
+                        {% endif %}
+                        <div class="col-md-12">
+                            <label for="notes" class="form-label">ملاحظات إضافية (اختياري)</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">إرسال طلب الحجز</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

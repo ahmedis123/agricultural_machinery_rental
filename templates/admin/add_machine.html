@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}إضافة آلة زراعية - نظام إدارة وتأجير الآلات الزراعية{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">إضافة آلة زراعية جديدة</h1>
+        <div class="mb-4">
+            <a href="{{ url_for('admin_machines') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-right me-2"></i> العودة لقائمة الآلات
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h4 class="mb-0">بيانات الآلة الزراعية</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{{ url_for('add_machine') }}" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">اسم الآلة <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ form.name if form else '' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="type_id" class="form-label">نوع الآلة <span class="text-danger">*</span></label>
+                            <select class="form-select" id="type_id" name="type_id" required>
+                                <option value="">-- اختر نوع الآلة --</option>
+                                {% for type in machine_types %}
+                                <option value="{{ type.id }}" {% if form and form.type_id|int == type.id %}selected{% endif %}>{{ type.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="state_id" class="form-label">الولاية <span class="text-danger">*</span></label>
+                            <select class="form-select" id="state_id" name="state_id" onchange="getLocalities(this.value, 'locality_id')" required>
+                                <option value="">-- اختر الولاية --</option>
+                                {% for state in states %}
+                                <option value="{{ state.id }}" {% if form and form.state_id|int == state.id %}selected{% endif %}>{{ state.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="locality_id" class="form-label">المحلية <span class="text-danger">*</span></label>
+                            <select class="form-select" id="locality_id" name="locality_id" required disabled>
+                                <option value="">-- اختر الولاية أولاً --</option>
+                                {% for locality in localities %}
+                                <option value="{{ locality.id }}" {% if form and form.locality_id|int == locality.id %}selected{% endif %}>{{ locality.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="owner_phone" class="form-label">رقم هاتف المالك <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="owner_phone" name="owner_phone" value="{{ form.owner_phone if form else '' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="image" class="form-label">صورة الآلة</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        </div>
+                        <div class="col-md-12">
+                            <label for="description" class="form-label">وصف الآلة</label>
+                            <textarea class="form-control" id="description" name="description" rows="4">{{ form.description if form else '' }}</textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">إضافة الآلة</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // تحميل المحليات عند تحميل الصفحة إذا كانت الولاية محددة
+        var stateId = $('#state_id').val();
+        if (stateId) {
+            getLocalities(stateId, 'locality_id');
+        }
+        
+        // التحقق من صحة النموذج قبل الإرسال
+        $('form').on('submit', function(e) {
+            var stateId = $('#state_id').val();
+            var localityId = $('#locality_id').val();
+            
+            if (!stateId) {
+                e.preventDefault();
+                alert('يرجى اختيار الولاية أولاً');
+                $('#state_id').focus();
+                return false;
+            }
+            
+            if (!localityId) {
+                e.preventDefault();
+                alert('يرجى اختيار المحلية');
+                $('#locality_id').focus();
+                return false;
+            }
+            
+            return true;
+        });
+    });
+</script>
+{% endblock %}

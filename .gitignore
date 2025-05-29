@@ -1,0 +1,48 @@
+static/bootstrap-5.3.6-dist/
+static/fontawesome-free-6.7.2-web
+static/uploads/*
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Flask/Python
+.env
+.venv
+ENV/
+env/
+venv/
+instance/
+*.log
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# SQLite database
+*.sqlite3
+*.db
+
+# MacOS
+.DS_Store

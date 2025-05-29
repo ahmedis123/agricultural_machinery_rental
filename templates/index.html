@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}الرئيسية - نظام إدارة وتأجير الآلات الزراعية{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">مرحباً بكم في نظام إدارة وتأجير الآلات الزراعية</h1>
+            <p class="lead">منصة متكاملة لتسهيل عملية تأجير الآلات الزراعية في جميع أنحاء السودان</p>
+            <hr class="my-4">
+            <p>يمكنك استعراض الآلات المتاحة والبحث عنها حسب الولاية والمحلية وطلب حجزها بكل سهولة</p>
+            <a class="btn btn-primary btn-lg" href="{{ url_for('machines') }}" role="button">استعراض الآلات المتاحة</a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h2 class="mb-4">البحث عن الآلات الزراعية</h2>
+        <form action="{{ url_for('machines') }}" method="get" class="row g-3">
+            <div class="col-md-5">
+                <label for="state_id" class="form-label">الولاية</label>
+                <select class="form-select" id="state_id" name="state_id" onchange="getLocalities(this.value, 'locality_id')">
+                    <option value="">-- اختر الولاية --</option>
+                    {% for state in states %}
+                    <option value="{{ state.id }}">{{ state.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label for="locality_id" class="form-label">المحلية</label>
+                <select class="form-select" id="locality_id" name="locality_id" disabled>
+                    <option value="">-- اختر المحلية --</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">بحث</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h2 class="mb-4">أحدث الآلات المضافة</h2>
+    </div>
+</div>
+
+<div class="row">
+    {% if machines %}
+        {% for machine in machines %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                {% if machine.image %}
+                <img src="{{ url_for('static', filename='uploads/' + machine.image) }}" class="card-img-top" alt="{{ machine.name }}">
+                {% else %}
+                <img src="{{ url_for('static', filename='uploads/default-machine.jpg') }}" class="card-img-top" alt="صورة افتراضية">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ machine.name }}</h5>
+                    <p class="card-text">
+                        <strong>النوع:</strong> {{ machine.type }}<br>
+                        <strong>الولاية:</strong> {{ machine.state }}<br>
+                        <strong>المحلية:</strong> {{ machine.locality }}<br>
+                        <strong>الوصف:</strong> {{ machine.description[:100] }}{% if machine.description|length > 100 %}...{% endif %}
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('machine_details', machine_id=machine.id) }}" class="btn btn-primary">عرض التفاصيل</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                لا توجد آلات زراعية متاحة حالياً
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12 text-center">
+        <a href="{{ url_for('machines') }}" class="btn btn-outline-primary">عرض جميع الآلات المتاحة</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}الآلات الزراعية - نظام إدارة وتأجير الآلات الزراعية{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4">الآلات الزراعية المتاحة</h1>
+        
+        <!-- فلترة الآلات -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">فلترة الآلات</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('machines') }}" method="get" class="row g-3">
+                    <div class="col-md-5">
+                        <label for="state_id" class="form-label">الولاية</label>
+                        <select class="form-select" id="state_id" name="state_id" onchange="getLocalities(this.value, 'locality_id')">
+                            <option value="">-- اختر الولاية --</option>
+                            {% for state in states %}
+                            <option value="{{ state.id }}" {% if selected_state == state.id %}selected{% endif %}>{{ state.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="locality_id" class="form-label">المحلية</label>
+                        <select class="form-select" id="locality_id" name="locality_id" {% if not localities %}disabled{% endif %}>
+                            <option value="">-- اختر المحلية --</option>
+                            {% for locality in localities %}
+                            <option value="{{ locality.id }}" {% if selected_locality == locality.id %}selected{% endif %}>{{ locality.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">بحث</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% if machines %}
+        {% for machine in machines %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if machine.image %}
+                <img src="{{ url_for('static', filename='uploads/' + machine.image) }}" class="card-img-top" alt="{{ machine.name }}">
+                {% else %}
+                <img src="{{ url_for('static', filename='uploads/default-machine.jpg') }}" class="card-img-top" alt="صورة افتراضية">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ machine.name }}</h5>
+                    <p class="card-text">
+                        <strong>النوع:</strong> {{ machine.type }}<br>
+                        <strong>الولاية:</strong> {{ machine.state }}<br>
+                        <strong>المحلية:</strong> {{ machine.locality }}<br>
+                        <strong>الوصف:</strong> {{ machine.description[:100] }}{% if machine.description|length > 100 %}...{% endif %}
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('machine_details', machine_id=machine.id) }}" class="btn btn-primary">عرض التفاصيل</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                لا توجد آلات زراعية متطابقة مع معايير البحث
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{% if selected_state or selected_locality %}
+<div class="row mt-3">
+    <div class="col-md-12">
+        <a href="{{ url_for('machines') }}" class="btn btn-outline-secondary">إعادة ضبط الفلتر</a>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // تحميل المحليات عند تحميل الصفحة إذا كانت الولاية محددة
+        var stateId = $('#state_id').val();
+        if (stateId) {
+            getLocalities(stateId, 'locality_id');
+        }
+    });
+</script>
+{% endblock %}
